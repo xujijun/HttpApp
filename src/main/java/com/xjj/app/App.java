@@ -11,10 +11,6 @@ import com.xjj.util.FileAccessUtils;
 import com.xjj.util.RandomUtils;
 import com.xjj.util.RegexUtils;
 
-/**
- * Hello world!
- *
- */
 public class App {
 	private static String getTimeString() {
 		return DateUtils.getCurrentDateString(DateUtils.DFHHmmssSSS);
