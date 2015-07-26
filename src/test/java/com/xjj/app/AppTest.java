@@ -1,4 +1,4 @@
-package com.xjj.HttpApp;
+package com.xjj.app;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
