@@ -1,6 +1,7 @@
 package com.xjj.http;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpEntity;
@@ -17,6 +18,15 @@ import org.apache.http.util.EntityUtils;
  * 
  */
 public class HttpHelper {
+
+	public static Map<String, String> defaultHeaders = new HashMap<>();
+	
+	static{
+		defaultHeaders.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+		defaultHeaders.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36");
+		defaultHeaders.put("Accept-Language", "zh-CN,zh;q=0.8");
+		defaultHeaders.put("Connection", "keep-alive");
+	};
 
 	
 	/**

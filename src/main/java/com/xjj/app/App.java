@@ -1,7 +1,6 @@
 package com.xjj.app;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,11 +43,7 @@ public class App {
 			hostFileName = args[2];
 		}
 		
-		Map<String, String> headers = new HashMap<>();
-		headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-		headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36");
-		headers.put("Accept-Language", "zh-CN,zh;q=0.8");
-		headers.put("Connection", "keep-alive");
+		Map<String, String> headers = HttpHelper.defaultHeaders;
 		
 		List<String> hosts = FileAccessUtils.readByLines(hostFileName);
 		Map<String, Integer> urlHitCount = new HashMap<>(hosts.size());
