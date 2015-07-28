@@ -3,6 +3,7 @@ package com.xjj.app;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.xjj.http.HttpHelper;
@@ -23,7 +24,8 @@ public class App {
 	}
 	
 	private static String[] userAgents = {"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36",
-			"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36 SE 2.X MetaSr 1.0"};
+			"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36 SE 2.X MetaSr 1.0",
+			"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36"};
 	
 	public static void main(String[] args) {
 		int howLongMinutes = 35;	//Minutes
@@ -46,8 +48,9 @@ public class App {
 		headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
 		headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36");
 		headers.put("Accept-Language", "zh-CN,zh;q=0.8");
+		headers.put("Connection", "keep-alive");
 		
-		ArrayList<String> hosts = FileAccessUtils.readByLines(hostFileName);
+		List<String> hosts = FileAccessUtils.readByLines(hostFileName);
 		Map<String, Integer> urlHitCount = new HashMap<>(hosts.size());
 		for(String host : hosts){
 			urlHitCount.put(host, 0);
@@ -63,19 +66,28 @@ public class App {
 		
 		while ( System.currentTimeMillis() <= endTime) {
 			String url = RandomUtils.getRandomElement(hosts);
+			
 			String userAgent = RandomUtils.getRandomElement(userAgents);
 			headers.put("User-Agent",userAgent);
 			HttpResult result = HttpHelper.doGet(url, headers);
 			if(result.getCode()==200){
-				succCount ++;
 				String websiteHitCount = RegexUtils.getFirstMatch(result.getMsg(), "\\d+人阅读");
 				websiteHitCount = RegexUtils.findFirstNumber(websiteHitCount);
+				
 				if(websiteHitCount.endsWith("99")){
 					websiteHitCount += " ~ Bingo";
 					bingoCount ++;
 				}
+
+				succCount ++;
 				logMsg("%s request succeeded, read count: %s. No.%s", url, websiteHitCount, succCount);
 				urlHitCount.put(url, urlHitCount.get(url)+1);
+				
+				int hitCount = Integer.parseInt(websiteHitCount);
+				if(hitCount >= 999){
+					hosts.remove(url);
+					logMsg("WARNING: hitCount greater than 999! url=%s", url);
+				}
 			}else {
 				failCount ++;
 				logMsg("%s %s", url, result.toString());
