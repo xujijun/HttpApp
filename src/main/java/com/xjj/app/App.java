@@ -64,7 +64,6 @@ public class App {
 		while ( System.currentTimeMillis() <= endTime) {
 			String url = RandomUtils.getRandomElement(hosts);
 			String userAgent = RandomUtils.getRandomElement(userAgents);
-			System.out.println(userAgent);
 			headers.put("User-Agent",userAgent);
 			HttpResult result = HttpHelper.doGet(url, headers);
 			if(result.getCode()==200){
