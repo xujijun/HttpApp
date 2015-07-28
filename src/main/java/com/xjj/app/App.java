@@ -1,5 +1,6 @@
 package com.xjj.app;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class App {
 	public static void main(String[] args) {
 		int howLongMinutes = 35;	//Minutes
 		int maxIntervalMinutes = 1; //Minutes
-		String hostFileName = "D:/httphosts.txt";
+		String hostFileName = "D:" + File.separator + "httphosts.txt";
 		
 		if(args.length > 0){ //First Param: How long 
 			howLongMinutes = Integer.parseInt(args[0]);
