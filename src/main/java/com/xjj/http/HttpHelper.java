@@ -40,12 +40,13 @@ public class HttpHelper {
 	public static HttpResult doGet(String url) {
 		HttpResult result = new HttpResult();
 		HttpClient client = HttpClientBuilder.create().build();
-		HttpGet request = new HttpGet(url);
-		request.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-		request.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36");
-		request.setHeader("Accept-Language", "zh-CN,zh;q=0.8");
-		
+
 		try {
+			//HttpGet request = new HttpGet(URLEncoder.encode(url, "utf-8"));
+			HttpGet request = new HttpGet(url);
+			request.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+			request.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36");
+			request.setHeader("Accept-Language", "zh-CN,zh;q=0.8");
 			HttpResponse response = client.execute(request);
 			HttpEntity entity = response.getEntity();
 			result.setCode(response.getStatusLine().getStatusCode());
@@ -73,13 +74,13 @@ public class HttpHelper {
 	public static HttpResult doGet(String url, Map<String, String> headers) {
 		HttpResult result = new HttpResult();
 		HttpClient client = HttpClientBuilder.create().build();
-		HttpGet request = new HttpGet(url);
-		
-		for(String key : headers.keySet()){
-			request.setHeader(key, headers.get(key));
-		}
 		
 		try {
+			//HttpGet request = new HttpGet(URLEncoder.encode(url, "utf-8"));
+			HttpGet request = new HttpGet(url);
+			for(String key : headers.keySet()){
+				request.setHeader(key, headers.get(key));
+			}
 			HttpResponse response = client.execute(request);
 			HttpEntity entity = response.getEntity();
 			result.setCode(response.getStatusLine().getStatusCode());
