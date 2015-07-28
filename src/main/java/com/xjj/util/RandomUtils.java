@@ -53,6 +53,15 @@ public class RandomUtils {
 	public static <E> E getRandomElement(List<E> list){
 		return list.get(getRandomInt(list.size()));
 	}
+
+	/**
+	 * 从数组中随机取得一个元素
+	 * @param list
+	 * @return
+	 */
+	public static <E> E getRandomElement(E[] array){
+		return array[getRandomInt(array.length)];
+	}
 	
 	/**
 	 * 从set中随机取得一个元素

@@ -22,6 +22,9 @@ public class App {
 		System.out.println(getTimeString() + " [myLog] " + String.format(format, args));
 	}
 	
+	private static String[] userAgents = {"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36",
+			"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36 SE 2.X MetaSr 1.0"};
+	
 	public static void main(String[] args) {
 		int howLongMinutes = 35;	//Minutes
 		int maxIntervalMinutes = 1; //Minutes
@@ -39,6 +42,11 @@ public class App {
 			hostFileName = args[2];
 		}
 		
+		Map<String, String> headers = new HashMap<>();
+		headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+		headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36");
+		headers.put("Accept-Language", "zh-CN,zh;q=0.8");
+		
 		ArrayList<String> hosts = FileAccessUtils.readByLines(hostFileName);
 		Map<String, Integer> urlHitCount = new HashMap<>(hosts.size());
 		for(String host : hosts){
@@ -55,7 +63,10 @@ public class App {
 		
 		while ( System.currentTimeMillis() <= endTime) {
 			String url = RandomUtils.getRandomElement(hosts);
-			HttpResult result = HttpHelper.doGet(url);
+			String userAgent = RandomUtils.getRandomElement(userAgents);
+			System.out.println(userAgent);
+			headers.put("User-Agent",userAgent);
+			HttpResult result = HttpHelper.doGet(url, headers);
 			if(result.getCode()==200){
 				succCount ++;
 				String websiteHitCount = RegexUtils.getFirstMatch(result.getMsg(), "\\d+人阅读");
