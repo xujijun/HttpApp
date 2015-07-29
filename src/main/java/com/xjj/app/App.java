@@ -7,21 +7,14 @@ import java.util.Map;
 
 import com.xjj.http.HttpHelper;
 import com.xjj.http.HttpResult;
-import com.xjj.util.DateUtils;
 import com.xjj.util.FileAccessUtils;
+import com.xjj.util.MyLog;
 import com.xjj.util.RandomUtils;
 import com.xjj.util.RegexUtils;
 
 
 public class App {
-	private static String getTimeString() {
-		return DateUtils.getCurrentDateString(DateUtils.DFHHmmssSSS);
-	}
-	
-	private static void logMsg(String format, Object... args){
-		System.out.println(getTimeString() + " [myLog] " + String.format(format, args));
-	}
-	
+
 	public static void main(String[] args) {
 		int howLongMinutes = 35;	//Minutes
 		int maxIntervalMinutes = 1; //Minutes
@@ -47,7 +40,7 @@ public class App {
 			urlHitCount.put(host, 0);
 		}
 		
-		logMsg("Program started, will last for %s minutes, with maximum interval %s minutes", howLongMinutes, maxIntervalMinutes);
+		MyLog.info("Program started, will last for %s minutes, with maximum interval %s minutes", howLongMinutes, maxIntervalMinutes);
 		
 		long endTime = System.currentTimeMillis() + howLongMinutes*60*1000;
 		long maxInterval = maxIntervalMinutes*60*1000;
@@ -63,24 +56,22 @@ public class App {
 			if(result.getCode()==200){
 				String websiteHitCount = RegexUtils.getFirstMatch(result.getMsg(), "\\d+人阅读");
 				websiteHitCount = RegexUtils.findFirstNumber(websiteHitCount);
-				
+				int hitCount = Integer.parseInt(websiteHitCount);
 				if(websiteHitCount.endsWith("99")){
 					websiteHitCount += " ~ Bingo";
 					bingoCount ++;
 				}
 
 				succCount ++;
-				logMsg("%s request succeeded, read count: %s. No.%s", url, websiteHitCount, succCount);
+				MyLog.info("%s request succeeded, read count: %s. No.%s", url, websiteHitCount, succCount);
 				urlHitCount.put(url, urlHitCount.get(url)+1);
-				
-				int hitCount = Integer.parseInt(websiteHitCount);
 				if(hitCount >= 999){
 					hosts.remove(url);
-					logMsg("WARNING: hitCount greater than 999! url=%s", url);
+					MyLog.warn("ATTENTION: hitCount greater than 999! url=%s", url);
 				}
 			}else {
 				failCount ++;
-				logMsg("%s %s", url, result.toString());
+				MyLog.info("%s %s", url, result.toString());
 			}
 			
 			long interval = Math.abs(RandomUtils.getRandomLong(maxInterval));
@@ -90,7 +81,7 @@ public class App {
 			}
 			
 			long currentTimeInSecond = System.currentTimeMillis()/1000;
-			logMsg("Time to the end: %s'%s\". Next request in %s seconds...", (endTime/1000-currentTimeInSecond)/60, (endTime/1000-currentTimeInSecond)%60, interval/1000);
+			MyLog.info("Time to the end: %s'%s\". Next request in %s seconds...", (endTime/1000-currentTimeInSecond)/60, (endTime/1000-currentTimeInSecond)%60, interval/1000);
 			try {
 				Thread.sleep(interval);
 			} catch (InterruptedException e) {
@@ -101,6 +92,6 @@ public class App {
 		for(Map.Entry<String, Integer> entry : urlHitCount.entrySet()){
 			System.out.println(entry.getKey() + " : " + entry.getValue());
 		}
-		logMsg("Completed. Succeeded: %s, Failed: %s, Bingo: %s", succCount, failCount, bingoCount);
+		MyLog.info("Completed. Succeeded: %s, Failed: %s, Bingo: %s", succCount, failCount, bingoCount);
 	}	
 }
