@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 随机数工具，单例模式
@@ -12,11 +13,12 @@ import java.util.Set;
  *
  */
 public class RandomUtils {
-	private static Random random;
+	//private static Random random;
 
 	//双重校验锁获取一个Random单例
 	public static Random getRandom() {
-		if(random==null){
+		return ThreadLocalRandom.current();
+		/*if(random==null){
 			synchronized (RandomUtils.class) {
 				if(random==null){
 					random =new Random();
@@ -24,7 +26,7 @@ public class RandomUtils {
 			}
 		}
 		
-		return random;
+		return random;*/
 	}
 
 	/**
