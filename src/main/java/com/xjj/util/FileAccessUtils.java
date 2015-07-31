@@ -53,7 +53,7 @@ public class FileAccessUtils {
 	}
 	
 	/**
-	 * 去除ini文件中的注释，以";"或"#"开头
+	 * 去除ini文件中的注释，以";"或"#"开头，顺便去除UTF-8等文件的BOM头
 	 * @param source
 	 * @return
 	 */
@@ -68,26 +68,29 @@ public class FileAccessUtils {
 			result = result.substring(0, result.indexOf("#"));
 		}
 		
-		//去除UTF-8的BOM！！！用notepad编辑的话，在文件的第一个字符就是这个！！！
-		if(result.startsWith("\uFEFF")){
-			result = result.substring(1);
+		//去除UTF-8的BOM！！！用Windows中的编辑器保存UTF-8文件，在文件的第一个字符就是这个！！！
+		if(result.startsWith("\uFEFF")){ 
+			//result = result.substring(1);
+			result = result.replace("\uFEFF", "");
 		}
 		
 		return result.trim();
 	}
 	
 	/**
-	 * 读取 INI 文件，注释以‘#’或‘;’开头，
-	 *
-	 * 支持行连接符号'\'（行末）；
-	 * 支持global property；
-	 * 支持list格式，支持；
+	 * 读取 INI 文件，存放到Map中
+	 * 
+	 * 支持以‘#’或‘;’开头的注释；
+	 * 支持行连接符（行末的'\'标记）；
+	 * 支持缺省的global properties；
+	 * 支持list格式（非name=value格式处理为list格式）；
 	 * 支持空行、name/value前后的空格；
-	 * 如果有重名，去最后一个；
+	 * 如果有重名，取最后一个；
 	 * 
 	 * 格式（例子）如下
 	 * 
 	 * # 我是注释
+	 * ; 我也是注释
 	 * 
 	 * name0=value0  # 我是global properties
 	 * name10=value10
@@ -95,7 +98,7 @@ public class FileAccessUtils {
 	 * [normal section] # 我是普通的section
 	 * name1=value1 # 我是name和value
 	 * 
-	 * [list section] # 我是只有value的section，以第一个是否包含'='为标准
+	 * [list section] # 我是只有value的section，以第一个是否包含'='为判断标准
 	 * value1
 	 * value2
 	 * 
@@ -179,6 +182,7 @@ public class FileAccessUtils {
             }
         }
         
+        //整理拆开name=value对，并存放到MAP中：
         //从listResult<String, List>中，看各个list中的元素是否包含等号“=”，如果包含，则拆开并放到Map中
         //整理后，把结果放进result<String, Object>中
         for(String key : listResult.keySet()){
