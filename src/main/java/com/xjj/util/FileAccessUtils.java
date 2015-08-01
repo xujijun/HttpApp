@@ -2,12 +2,16 @@ package com.xjj.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.io.input.BOMInputStream;
 
 /**
  * 读取文件
@@ -68,12 +72,6 @@ public class FileAccessUtils {
 			result = result.substring(0, result.indexOf("#"));
 		}
 		
-		//去除UTF-8的BOM！！！用Windows中的编辑器保存UTF-8文件，在文件的第一个字符就是这个！！！
-		if(result.startsWith("\uFEFF")){ 
-			//result = result.substring(1);
-			result = result.replace("\uFEFF", "");
-		}
-		
 		return result.trim();
 	}
 	
@@ -114,9 +112,12 @@ public class FileAccessUtils {
 		File file = new File(fileName);
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(file));
-        	//reader = new BufferedReader(new InputStreamReader(new FileInputStream(file),"windows-1256"));
-            String str = null;
+            //reader = new BufferedReader(new FileReader(file));
+        	
+        	//使用BOMInputStream自动去除UTF-8中的BOM！！！
+        	reader = new BufferedReader(new InputStreamReader(new BOMInputStream(new FileInputStream(file))));
+
+        	String str = null;
             String currentSection = globalSection; //处理缺省的section
             List<String> currentProperties = new ArrayList<>();
             boolean lineContinued = false;

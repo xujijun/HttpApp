@@ -37,6 +37,7 @@ public class App {
 		}
 
 		Map<String, Object> ini = FileAccessUtils.readIniFile(confFileName);
+		
 		Map<String, String> headers = HttpHelper.defaultHeaders;
 		
 		@SuppressWarnings("unchecked")
