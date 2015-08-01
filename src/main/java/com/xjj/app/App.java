@@ -1,6 +1,7 @@
 package com.xjj.app;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ public class App {
 		int succCount = 0;
 		int failCount = 0;
 		int bingoCount = 0;
+		List<String> removedUrls = new ArrayList<>();
 		
 		while ( System.currentTimeMillis() <= endTime) {
 			String url = RandomUtils.getRandomElement(hosts);
@@ -67,6 +69,7 @@ public class App {
 				urlHitCount.put(url, urlHitCount.get(url)+1);
 				if(hitCount >= 999){
 					hosts.remove(url);
+					removedUrls.add(url);
 					MyLog.warn("ATTENTION: hitCount greater than 999! url=%s", url);
 				}
 			}else {
@@ -93,5 +96,8 @@ public class App {
 			System.out.println(entry.getKey() + " : " + entry.getValue());
 		}
 		MyLog.info("Completed. Succeeded: %s, Failed: %s, Bingo: %s", succCount, failCount, bingoCount);
+		if(removedUrls.size()>0){
+			MyLog.warn("Url(s) need to be excluded: %s", removedUrls);
+		}
 	}	
 }
