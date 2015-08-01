@@ -13,29 +13,45 @@ import com.xjj.util.MyLog;
 import com.xjj.util.RandomUtils;
 import com.xjj.util.RegexUtils;
 
-
+/**
+ * Config file format:
+ * 
+ * howLongMinutes = 25
+ * maxIntervalMinutes = 2
+ * 
+ * [hosts]
+ * url1
+ * ulr2
+ *
+ */
 public class App {
 
 	public static void main(String[] args) {
 		int howLongMinutes = 35;	//Minutes
 		int maxIntervalMinutes = 1; //Minutes
-		String hostFileName = "D:" + File.separator + "httphosts.txt";
 		
-		if(args.length > 0){ //First Param: How long 
-			howLongMinutes = Integer.parseInt(args[0]);
+		String confFileName = "D:" + File.separator + "conf.ini";
+		
+		if(args.length > 0){ //First Param: Configuration File Path and Name
+			confFileName = args[0];
 		}
 
-		if(args.length > 1){ //Second Param: Interval
-			maxIntervalMinutes = Integer.parseInt(args[1]);
-		}
-
-		if(args.length > 2){ //Third Param: File Path and Name
-			hostFileName = args[2];
-		}
-		
+		Map<String, Object> ini = FileAccessUtils.readIniFile(confFileName);
 		Map<String, String> headers = HttpHelper.defaultHeaders;
 		
-		List<String> hosts = FileAccessUtils.readByLines(hostFileName);
+		@SuppressWarnings("unchecked")
+		Map<String, String> globalSettings = (Map<String, String>) ini.get("global");
+		if(globalSettings.get("howLongMinutes")!=null){
+			howLongMinutes = Integer.parseInt(globalSettings.get("howLongMinutes"));
+		}
+
+		if(globalSettings.get("maxIntervalMinutes")!=null){
+			maxIntervalMinutes = Integer.parseInt(globalSettings.get("maxIntervalMinutes"));
+		}
+
+		@SuppressWarnings("unchecked")
+		List<String> hosts = (List<String>) ini.get("hosts");
+		
 		Map<String, Integer> urlHitCount = new HashMap<>(hosts.size());
 		for(String host : hosts){
 			urlHitCount.put(host, 0);
